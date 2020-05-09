@@ -23,11 +23,7 @@ def create_image():
     response = None
 
     map_request = "http://static-maps.yandex.ru/1.x/?"
-    req_params = {key: (map_params[key]
-                        if not isinstance(map_params[key], list)
-                        else ','.join(map(str, map_params[key])))
-                  for key in map_params.keys()}
-    response = requests.get(map_request, params=req_params)
+    response = requests.get(map_request, params=map_params)
 
     if not response:
         print("Ошибка выполнения запроса:")
@@ -40,27 +36,28 @@ def create_image():
 
 
 pygame.init()
-
-create_image()
-img = pygame.image.load(map_file)
-screen = pygame.display.set_mode((img.get_width(), img.get_height()))
-screen.blit(img, (0, 0))
+screen = pygame.display.set_mode((650, 450))
 running = True
 while running:
     keys = pygame.key.get_pressed()
-    for evnt in pygame.event.get():
-        if evnt.type == pygame.QUIT:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
             running = False
-        elif evnt.type == pygame.KEYDOWN:
-            if evnt.key in [pygame.K_PAGEDOWN, pygame.K_PAGEUP]:
-                map_params['z'] += size[evnt.key] if 0 < map_params['z'] < 17 else -map_params['z'] + 1
-            elif evnt.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_DOWN, pygame.K_UP]:
-                x, y = coordinates[evnt.key]
+        elif event.type == pygame.KEYDOWN:
+            if event.key in [pygame.K_PAGEDOWN, pygame.K_PAGEUP]:
+                map_params['z'] += size[event.key] if 0 < map_params['z'] < 17 else -map_params['z'] + 1
+            elif event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_DOWN, pygame.K_UP]:
+                x, y = coordinates[event.key]
                 map_params['ll'][0] += x
                 map_params['ll'][1] += y
-            create_image()
-            screen.blit(pygame.image.load(map_file), (0, 0))
-
+            elif event.key == pygame.K_1:
+                map_params['l'] = 'map'
+            elif event.key == pygame.K_2:
+                map_params['l'] = 'sat'
+            elif event.key == pygame.K_3:
+                map_params['l'] = 'sat,skl'
+    create_image()
+    screen.blit(pygame.image.load(map_file), (0, 0))
     pygame.display.flip()
 pygame.quit()
 
