@@ -42,6 +42,12 @@ while running:
                 map_params['z'] -= 1 if map_params['z'] > 0 else 0
             if event.key == pygame.K_PAGEUP:
                 map_params['z'] += 1 if map_params['z'] < 17 else 0
+            if event.key == pygame.K_1:
+                map_params['l'] = 'map'
+            if event.key == pygame.K_2:
+                map_params['l'] = 'sat'
+            if event.key == pygame.K_3:
+                map_params['l'] = 'sat,skl'
     create_image()
     screen.blit(pygame.image.load(map_file), (0, 0))
     pygame.display.flip()
