@@ -23,7 +23,11 @@ def create_image():
     response = None
 
     map_request = "http://static-maps.yandex.ru/1.x/?"
-    response = requests.get(map_request, params=map_params)
+    req_params = {key: (map_params[key]
+                        if not isinstance(map_params[key], list)
+                        else ','.join(map(str, map_params[key])))
+                  for key in map_params.keys()}
+    response = requests.get(map_request, params=req_params)
 
     if not response:
         print("Ошибка выполнения запроса:")
@@ -45,7 +49,8 @@ while running:
             running = False
         elif event.type == pygame.KEYDOWN:
             if event.key in [pygame.K_PAGEDOWN, pygame.K_PAGEUP]:
-                map_params['z'] += size[event.key] if 0 < map_params['z'] < 17 else -map_params['z'] + 1
+                map_params['z'] += size[event.key] if 0 < map_params['z'] < 17 else -map_params[
+                    'z'] + 1
             elif event.key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_DOWN, pygame.K_UP]:
                 x, y = coordinates[event.key]
                 map_params['ll'][0] += x
